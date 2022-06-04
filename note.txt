@@ -1,0 +1,14 @@
+"type": "module",  HABILITA A NOVA SINTAXE
+
+nenhuma rota deve ser chamada após a rota all*
+                
+ app.all("*", (_, res) => { res.status(404).json({ message: "rota inexistente"}) })
+
+ o parâmetro req quando não usado pode ser substituído por _ (underline)
+
+ o package json startou com o npm init
+
+ depois configurar script
+
+nodemon no devDependencies
+
