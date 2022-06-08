@@ -8,7 +8,9 @@ const schema = new Schema({
         type: "string"        
     },
     telephone :{
-        type: "string"
+        type: "string",
+        unique: true
+       
     }
 
 })

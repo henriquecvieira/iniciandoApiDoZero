@@ -24,7 +24,7 @@ app.route("/healthcheck").get((_, res) => {
     res.json({
         status: "ok!"
     })
-})
+});
 
 app.use("/v1", Routes)
 
@@ -33,8 +33,8 @@ app.all("*", (_, res) => {
         message: "rota inexistente"
     })
     
-})
+});
 
 app.listen(process.env.PORT, () => {
     console.log(`backend started at http://localhost:${process.env.PORT}`)
-})
+});

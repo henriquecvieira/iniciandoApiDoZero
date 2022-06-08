@@ -3,6 +3,7 @@ let ajv = new Ajv({ allErrors: true, jsonPointers: true })
 
 import userSchema from "./userSchema.js"
 
+
 export default {
     validationInsert: async (req, res, next) => {
         const user = req.body
@@ -14,4 +15,4 @@ export default {
         }
         return next()
     }
-}
+}   

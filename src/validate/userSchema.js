@@ -1,10 +1,11 @@
+
 const userSchema = {
     type: "object",
     properties: {
         nome:{type: "string"},
         telephone: {type: "string"}
     },
-    required: ["nome", "telephone"],
+    required: ["nome", "telephone"], 
     additionalProperties: false
 }
 
