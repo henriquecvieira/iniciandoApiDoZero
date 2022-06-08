@@ -1,5 +1,5 @@
 import Ajv from 'ajv'
-let ajv = new Ajv({ allErrors: true, jsonPointers: true })
+let ajv = new Ajv({ allErrors: true, jsPropertySyntax: true })
 
 import userSchema from "./userSchema.js"
 

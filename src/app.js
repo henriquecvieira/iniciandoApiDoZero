@@ -1,20 +1,10 @@
 import express from "express"
 import Routes from "./routes/routes.js"
-import * as dotenv from "dotenv"
-import mongoose from "mongoose"
+import database from "./database/database.js"
+import User from "./models/user.js"
 
-dotenv.config()
 
-mongoose.connect(
-    process.env.MONGO_URL, 
-    {}, 
-    error => {
-        const message = error
-        ? `falha ao conectar no mmongo ${error}` 
-        : "conectado ao MONGO com sucesso"
-        console.log(message)
-    }
-)
+database.connectToDatabase()
 
 const app = express()
 
