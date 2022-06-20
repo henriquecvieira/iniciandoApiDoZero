@@ -1,4 +1,5 @@
 import express from "express"
+import 'dotenv/config'
 import Routes from "./routes/routes.js"
 import database from "./database/database.js"
 import User from "./models/user.js"

@@ -1,6 +1,8 @@
 import User from "../models/user.js"
 import { v4 as uuidv4 } from 'uuid';
 import crypto from "crypto"
+import token from "../middlewares/token.js";
+import bcrypt from "bcrypt"
 
 
 const generate = function () {
@@ -12,8 +14,8 @@ export default {
         try{ 
             const user = req.body
             user._id = uuidv4()   
-            // user.nome = generate()
-            // user.telephone = generate()     
+            user.nome = generate()
+            user.telephone = generate()     
             const validateTelephone = await User.findOne({telephone: user.telephone})
             const validateNome = await User.findOne({nome: user.nome})
             if (validateTelephone || validateNome ){
@@ -24,6 +26,27 @@ export default {
             
         }catch(err){
             return res.status(400).json({error: "registration failed!!"})
+        }
+    },
+    login: async (req, res) => {
+        try {
+            const { email, password } = req.body;   
+            const user = await User.findOne({ email }).select('+password');
+
+            if(!user){
+                return res.status(400).json({error: "User not found"})
+            }
+            if (!await bcrypt.compare( password , user.password )){
+                return res.status(400).json({ error: "Invalid user" })
+            }
+
+            user.password = undefined;
+
+            const tokenGeneration = await token.generationToken({user});
+            return res.status(201).json({user , token: tokenGeneration});
+        }catch(err){ 
+            console.log(err)
+            return res.status(400).json({error: 'Registration failed'});
         }
     },
     search: async (_, res) => {
@@ -47,7 +70,7 @@ export default {
     deleteById: async (req, res) => {
         try{
             const user = req.params
-            const resultFindById = await User.findById({_id: user})
+            const resultFindById = await User.findOne({_id: user})
             if (!resultFindById){
                 return res.status(404).json({error: "user was not found, insert the correct id!!"})
             } 
@@ -65,8 +88,8 @@ export default {
             if (!resultsFindById){
                 return res.status(404).json({error: "user was not found!!"})
             }             
-            const resultUpdateById = await User.updateOne({_id: id}, data)
-            return res.status(200).json(resultUpdateById)              
+            await User.updateOne({_id: id}, data)
+            return res.status(200).json(data)              
             
         } catch (error) {
             return res.status(400).json({error: "there is something wrong"})
