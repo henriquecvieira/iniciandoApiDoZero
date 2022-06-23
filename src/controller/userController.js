@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import crypto from "crypto"
 import token from "../middlewares/token.js";
 import bcrypt from "bcrypt"
+import  auth from "../middlewares/auth.js";
 
 
 const generate = function () {
@@ -13,16 +14,17 @@ export default {
     insert: async (req, res) => {
         try{ 
             const user = req.body
-            user._id = uuidv4()   
-            user.nome = generate()
-            user.telephone = generate()     
+            user._id = uuidv4()                
             const validateTelephone = await User.findOne({telephone: user.telephone})
             const validateNome = await User.findOne({nome: user.nome})
-            if (validateTelephone || validateNome ){
+            const validateEmail = await User.findOne({email: user.email})
+            const validateSenha = await User.findOne({senha: user.senha})
+            if (validateTelephone || validateNome || validateEmail ){
                 return res.status(201).json({error: "user already exists!!"})
             }            
-            const resultCreate = await User.create(user)
-            return res.status(201).json(resultCreate)
+            let resultCreate = await User.create(user)            
+            const resultToken = await token.generationToken(resultCreate)
+            return res.status(201).json({resultCreate, resultToken} )
             
         }catch(err){
             return res.status(400).json({error: "registration failed!!"})
@@ -31,7 +33,7 @@ export default {
     login: async (req, res) => {
         try {
             const { email, password } = req.body;   
-            const user = await User.findOne({ email }).select('+password');
+            const user = await User.findOne({ email }).select({password});
 
             if(!user){
                 return res.status(400).json({error: "User not found"})

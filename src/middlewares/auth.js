@@ -3,35 +3,21 @@ import dotenv from "dotenv"
 
 dotenv.config();
 
-// const auth = async (req, res, next) => {
-//     const authHeader = req.headers['authorization'];
 
-//     if(!authHeader){
-//         return res.status(401).send({ error: 'No token provided'});
-//     }
-    
-//     const parts = authHeader.split(' ');
 
-//     if(!parts.length === 2){
-//         return res.status(401).send({ error: 'Token error'});
-//     }
-
-//     const [ scheme, token] = parts;
-
-//     if(!(/^Bearer$/i.test(scheme)))
-//     return res.status(401).send({ error: 'Token malformatted'});
-
-//     jwt.verify(token, process.env.SECRET, (err, decoded) => {
-//         if(err){ 
-//             return res.status(401).send({ error: 'Token invalid'});
-//         }
-//         req.userId = decoded._id;
-//         req.userName = decoded.name;
-//         req.userEmail = decoded.email;
-//         return next();    
-//     });
-// }
-
+const auth = async (req, res, next) => {
+    const authToken = req.headers['authorization']
+    const result = await validateToken(authToken)
+    console.log(result)
+    if (result.status == 'authenticate') {
+        req.body.nome = result.nome
+        req.body.email = result.email
+        
+        next()
+    }else{
+        res.status(result.code).json({ err: 'Não autorizado' })
+    }
+}
 const validateToken = async (params) => {
     let resultValidate;
     if (params != undefined) {
@@ -50,7 +36,7 @@ const validateToken = async (params) => {
             } else {
                 resultValidate = { 
                     status: 'authenticate',
-                    data: data.name,
+                    data: data.nome,
                     email: data.email
                 }
             }
@@ -59,19 +45,6 @@ const validateToken = async (params) => {
         resultValidate = { status: 'Não autorizado', code: 411 }
     }
     return resultValidate
-}
-const auth = async (req, res, next) => {
-    const authToken = req.headers['authorization']
-    const result = await validateToken(authToken)
-    console.log(result)
-    if (result.status == 'authenticate') {
-        req.body.name = result.name
-        req.body.email = result.email
-        // console.log("Cheguei aqui!! Token: " + authToken)
-        next()
-    }else{
-        res.status(result.code).json({ err: 'Não autorizado' })
-    }
 }
 export default {auth, validateToken}
 

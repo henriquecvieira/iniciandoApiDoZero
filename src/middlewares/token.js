@@ -6,13 +6,11 @@ dotenv.config();
 const generationToken = async (params) => {
     const token = jwt.sign(
         {
-            _id: params._id,
-            name: params.name,
-            email: params.email
+            id: params._id,
         },
         process.env.SECRET,
         { expiresIn: 86400 }
     )
-    return params.token = token
+    return token
 }
 export default {generationToken}

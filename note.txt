@@ -12,3 +12,6 @@ nenhuma rota deve ser chamada após a rota all*
 
 nodemon no devDependencies
 
+
+o JWt torna impossível alterar uma informação json codificada sem que o servidor não saiba, pode ser vista, mas não pode ser alterada
+não deve ser colocado dados sensívei no JWt, como senha de usuário por exemplo
