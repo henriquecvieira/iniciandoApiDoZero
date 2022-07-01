@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/app.js",
+    "prepare": "husky install",
+    "pre-commit": "npx standardx --fix"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.16"
+    "husky": "^8.0.1",
+    "nodemon": "^2.0.16",
+    "standard": "^17.0.0"
   }
 }
