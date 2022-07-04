@@ -1,36 +1,39 @@
-import User from '../models/user.js'
+import User from '../models/User.js'
 import { v4 as uuidv4 } from 'uuid'
-// import crypto from 'crypto'
 import token from '../middlewares/token.js'
 import bcrypt from 'bcrypt'
 
-// const generate = function () {
-//   return crypto.randomBytes(5).toString('hex')
-// }
 export default {
 
   insert: async (req, res) => {
     try {
       const user = req.body
-      user._id = uuidv4()
-      const validateTelephone = await User.findOne({ telephone: user.telephone })
-      const validateNome = await User.findOne({ nome: user.nome })
+
+      const validateName = await user.name
       const validateEmail = await User.findOne({ email: user.email })
-      //   const validateSenha = await User.findOne({ senha: user.senha })
-      if (validateTelephone || validateNome || validateEmail) {
-        return res.status(201).json({ error: 'user already exists!!' })
+
+      if (validateName === ' ') {
+        return res.status(400).send({ error: 'The name field is mandatory' })
       }
+      if (validateEmail) {
+        return res.status(400).send({ error: 'User already exists' })
+      }
+
+      user._id = uuidv4()
       const resultCreate = await User.create(user)
-      const resultToken = await token.generationToken(resultCreate)
-      return res.status(201).json({ resultCreate, resultToken })
+      resultCreate.password = undefined
+      const tokenGeneration = await token.generationToken({ resultCreate })
+
+      return res.status(201).json({ resultCreate, token: tokenGeneration })
     } catch (err) {
-      return res.status(400).json({ error: 'registration failed!!' })
+      console.log(err)
+      return res.status(400).json({ error: 'Registration failed' })
     }
   },
   login: async (req, res) => {
     try {
       const { email, password } = req.body
-      const user = await User.findOne({ email }).select({ password })
+      const user = await User.findOne({ email }).select(User.password)
 
       if (!user) {
         return res.status(400).json({ error: 'User not found' })
@@ -49,7 +52,6 @@ export default {
     }
   },
   search: async (_, res) => {
-    // const user = req.body
     const resultSearch = await User.find()
     return res.status(200).json({ data: resultSearch })
   },

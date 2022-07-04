@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
   const result = await validateToken(authToken)
   console.log(result)
   if (result.status === 'authenticate') {
-    req.body.nome = result.nome
+    req.body.name = result.name
     req.body.email = result.email
 
     next()
@@ -34,7 +34,7 @@ const validateToken = async (params) => {
       } else {
         resultValidate = {
           status: 'authenticate',
-          data: data.nome,
+          data: data.name,
           email: data.email
         }
       }
