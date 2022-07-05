@@ -34,15 +34,14 @@ export default {
     try {
       const { email, password } = req.body
       const user = await User.findOne({ email }).select(User.password)
-      const salt = process.env.SECRETPASSWORD
-      if (bcrypt.compare(password, salt)) {
+      const senha = bcrypt.compare(password, user, () => {
+        console.info('show!')
+      })
+      if (senha) {
         return res.status(200).json({ user, successs: 'user connected!' })
       }
-
-      user.password = undefined
-
       const tokenGeneration = await token.generationToken({ user })
-      return res.status(201).json({ user, token: tokenGeneration })
+      return res.status(200).json({ user, token: tokenGeneration })
     } catch (error) {
       return res.status(400).json({ error: 'Registration failed' })
     }
