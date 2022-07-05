@@ -30,24 +30,20 @@ export default {
       return res.status(400).json({ error: 'Registration failed' })
     }
   },
-  login: async (req, res) => {
+  login: async function (req, res) {
     try {
       const { email, password } = req.body
       const user = await User.findOne({ email }).select(User.password)
-
-      if (!user) {
-        return res.status(400).json({ error: 'User not found' })
-      }
-      if (!await bcrypt.compare(password, user.password)) {
-        return res.status(400).json({ error: 'Invalid user' })
+      const salt = process.env.SECRETPASSWORD
+      if (bcrypt.compare(password, salt)) {
+        return res.status(200).json({ user, successs: 'user connected!' })
       }
 
       user.password = undefined
 
       const tokenGeneration = await token.generationToken({ user })
       return res.status(201).json({ user, token: tokenGeneration })
-    } catch (err) {
-      console.log(err)
+    } catch (error) {
       return res.status(400).json({ error: 'Registration failed' })
     }
   },
